@@ -10,8 +10,13 @@ connectDB();
 
 app.get('/api/service/:city/:type', async (req, res) => {
   const { city, type } = req.params;
-  const response = await getServiceInfo(city, type);
-  res.json({ response });
+  try {
+    const response = await getServiceInfo(city, type);
+    res.json({ response });
+  } catch (error) {
+    console.error('Error fetching service info:', error);
+    res.status(500).json({ error: 'Erro ao buscar informações do serviço.' });
+  }
 });
 
 const PORT = process.env.PORT || 5000;

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import styles from './Chat.module.css';
-import dialogo from '../../../../../server/src/handlers/dialogo.json';
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
@@ -10,88 +9,109 @@ const Chat = () => {
   const [currentStep, setCurrentStep] = useState('welcome');
   const messagesEndRef = useRef(null);
 
+  // Service type mapping
+  const serviceTypes = {
+    saude: 'Saúde',
+    seguranca: 'Segurança',
+    justica: 'Justiça',
+    orgaos_publicos: 'Órgãos Públicos'
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
+    console.log('Initial render - Setting welcome message');
     setMessages([{
-      text: dialogo.welcome,
+      text: "Bem-vindo! Por favor, escolha a cidade para a qual deseja informações:",
       user: false
     }]);
     
-    const cityOptions = Object.keys(dialogo.cities).map(city => ({
-      text: city,
-      value: city
-    }));
-    setCurrentOptions(cityOptions);
+    setCurrentOptions([
+      { text: 'Osório', value: 'osorio' },
+      { text: 'Tramandaí', value: 'tramandai' },
+      { text: 'Santo Antônio da Patrulha', value: 'santo_antonio' },
+      { text: 'Capão da Canoa', value: 'capao' }
+    ]);
   }, []);
 
   useEffect(() => {
+    console.log('Messages updated:', messages);
     scrollToBottom();
   }, [messages]);
 
+  const formatServiceResponse = (response) => {
+    if (response === 'Serviço não encontrado.') {
+      return `Desculpe, não encontramos serviços desta categoria para a cidade selecionada.`;
+    }
+    return response;
+  };
+
   const handleOptionClick = async (option) => {
+    console.log('Option clicked:', option);
+    console.log('Current step:', currentStep);
+    console.log('Selected city:', selectedCity);
+
     const newMessage = { text: option.text, user: true };
     setMessages(prev => [...prev, newMessage]);
 
     try {
       if (currentStep === 'welcome') {
+        console.log('Processing city selection:', option.value);
         setSelectedCity(option.value);
-        const cityMenu = dialogo.cities[option.value].menu;
-        const botMessage = { text: cityMenu, user: false };
+        const botMessage = {
+          text: `Você escolheu ${option.text}. Qual tipo de serviço você deseja consultar?`,
+          user: false
+        };
         setMessages(prev => [...prev, botMessage]);
         
-        const serviceTypes = [
+        setCurrentOptions([
           { text: 'Saúde', value: 'saude' },
           { text: 'Segurança', value: 'seguranca' },
           { text: 'Justiça', value: 'justica' },
           { text: 'Órgãos Públicos', value: 'orgaos_publicos' }
-        ];
-        setCurrentOptions(serviceTypes);
+        ]);
         setCurrentStep('service');
       } 
       else if (currentStep === 'service') {
-        const serviceMenu = dialogo[option.value].menu;
-        const botMessage = { text: serviceMenu, user: false };
-        setMessages(prev => [...prev, botMessage]);
-
-        const specificOptions = Object.entries(dialogo[option.value])
-          .filter(([key]) => key !== 'menu')
-          .map(([key, value]) => ({
-            text: value,
-            value: value
-          }));
-        setCurrentOptions(specificOptions);
-        setCurrentStep('specific');
-      }
-      else if (currentStep === 'specific') {
+        console.log('Making API request for:', selectedCity, option.value);
+        console.log('API URL:', `/api/service/${selectedCity}/${option.value}`);
+        
         const response = await axios.get(`/api/service/${selectedCity}/${option.value}`);
-        const botMessage = { text: response.data.response, user: false };
+        console.log('API response:', response.data);
+        
+        const formattedResponse = formatServiceResponse(response.data.response);
+        const botMessage = {
+          text: `Serviços de ${serviceTypes[option.value]} em ${selectedCity}:\n\n${formattedResponse}`,
+          user: false
+        };
         setMessages(prev => [...prev, botMessage]);
 
         setCurrentOptions([
-          { text: 'Iniciar Nova Consulta', value: 'restart' }
+          { text: 'Realizar Nova Consulta', value: 'restart' }
         ]);
         setCurrentStep('restart');
       }
       else if (currentStep === 'restart') {
+        console.log('Restarting chat');
         setMessages([{
-          text: dialogo.welcome,
+          text: "Bem-vindo! Por favor, escolha a cidade para a qual deseja informações:",
           user: false
         }]);
-        const cityOptions = Object.keys(dialogo.cities).map(city => ({
-          text: city,
-          value: city
-        }));
-        setCurrentOptions(cityOptions);
+        setCurrentOptions([
+          { text: 'Osório', value: 'osorio' },
+          { text: 'Tramandaí', value: 'tramandai' },
+          { text: 'Santo Antônio da Patrulha', value: 'santo_antonio' },
+          { text: 'Capão da Canoa', value: 'capao' }
+        ]);
         setSelectedCity('');
         setCurrentStep('welcome');
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error details:', error.response || error);
       const errorMessage = { 
-        text: 'Desculpe, ocorreu um erro ao buscar as informações.', 
+        text: 'Desculpe, ocorreu um erro ao buscar as informações. Por favor, tente novamente.', 
         user: false 
       };
       setMessages(prev => [...prev, errorMessage]);
