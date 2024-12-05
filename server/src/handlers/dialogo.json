@@ -1,0 +1,59 @@
+{
+  "welcome": "Bem-vindo! Por favor, escolha a cidade para a qual deseja informações:",
+  
+  "cities": {
+    "osorio": {
+      "menu": "Você escolheu Osório. Qual serviço você deseja informações?\n1. Saúde\n2. Segurança\n3. Justiça\n4. Órgãos Públicos",
+      "1": "saude",
+      "2": "seguranca",
+      "3": "justica",
+      "4": "orgaos_publicos"
+    },
+    "tramandai": {
+      "menu": "Você escolheu Tramandaí. Qual serviço você deseja informações?\n1. Saúde\n2. Segurança\n3. Justiça\n4. Órgãos Públicos",
+      "1": "saude",
+      "2": "seguranca",
+      "3": "justica",
+      "4": "orgaos_publicos"
+    },
+    "santo_antonio": {
+      "menu": "Você escolheu Santo Antônio da Patrulha. Qual serviço você deseja informações?\n1. Saúde\n2. Segurança\n3. Justiça\n4. Órgãos Públicos",
+      "1": "saude",
+      "2": "seguranca",
+      "3": "justica",
+      "4": "orgaos_publicos"
+    },
+    "capao": {
+      "menu": "Você escolheu Capão da Canoa. Qual serviço você deseja informações?\n1. Saúde\n2. Segurança\n3. Justiça\n4. Órgãos Públicos",
+      "1": "saude",
+      "2": "seguranca",
+      "3": "justica",
+      "4": "orgaos_publicos"
+    }
+  },
+  
+  "saude": {
+    "menu": "Escolha o serviço de saúde:\n1. Hospital\n2. Secretaria de Saúde",
+    "1": "hospital",
+    "2": "secretaria_saude"
+  },
+  
+  "seguranca": {
+    "menu": "Escolha o serviço de segurança:\n1. Polícia Militar\n2. Polícia Civil",
+    "1": "policia_militar",
+    "2": "policia_civil"
+  },
+  
+  "justica": {
+    "menu": "Escolha o serviço de justiça:\n1. Fórum\n2. Ministério Público\n3. Defensoria Pública",
+    "1": "forum",
+    "2": "ministerio_publico",
+    "3": "defensoria_publica"
+  },
+  
+  "orgaos_publicos": {
+    "menu": "Escolha o órgão público:\n1. Prefeitura Municipal\n2. Câmara Legislativa",
+    "1": "prefeitura_municipal",
+    "2": "camara_legislativa"
+  }
+}
